@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoqira AI — Real-time Market Analysis & Signal Entry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- TradingView Lightweight Charts (Local Offline Bundle v4.2.1) -->
+    <script src="/static/js/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+
+    <!-- 1. Ticker Tape Across Top -->
+    <div class="ticker-tape">
+        <div class="ticker-track" id="ticker-track">
+            <!-- Ticker items injected via JS -->
+            <div class="ticker-item"><span class="sym">Loading Live Tickers...</span></div>
+        </div>
+    </div>
+
+    <!-- 2. Header -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">⚡</div>
+            <div class="logo-text">
+                <h1>ZOQIRA OMEGA</h1>
+                <span>ប្រព័ន្ធវិភាគទីផ្សារ & សញ្ញាជួញដូរ AI</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- ICT Kill Zone Dynamic Badge -->
+            <div class="ict-zone-pill" id="ict-zone-badge">
+                <span class="ict-dot"></span>
+                <span id="ict-zone-name">ICT ZONE: CHECKING...</span>
+                <span class="ict-clock" id="ict-clock">--:--:-- GMT+7</span>
+            </div>
+
+            <div class="live-pill">
+                <div class="pulsing-dot"></div>
+                <span>LIVE MARKET</span>
+            </div>
+            <button class="btn-scan" id="btn-open-scan">
+                <span>🔍</span>
+                <span>ស្កេន XAUUSD / BTCUSD</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 3. App Main Container -->
+    <div class="app-container">
+
+        <!-- ICT Killzone Advisory Banner -->
+        <div class="ict-advisory-banner" id="ict-advisory-banner">
+            <div class="advisory-left">
+                <span class="advisory-icon" id="advisory-icon">🎯</span>
+                <div class="advisory-text">
+                    <strong id="advisory-title">ICT KILL ZONE ADVISORY</strong>
+                    <span id="advisory-desc">កំពុងពិនិត្យពេលវេលាស្ថាប័នធនាគារពិភពលោក (Checking Institutional Timing)...</span>
+                </div>
+            </div>
+            <div class="advisory-badge optimal" id="advisory-badge">CALCULATING</div>
+        </div>
+
+        <!-- Controls Bar: Market Selector & Timeframe Pills -->
+        <div class="controls-bar">
+            <div class="market-pills" id="market-pills">
+                <!-- Market Pills Injected via JS -->
+            </div>
+
+            <div class="timeframe-group">
+                <button class="tf-btn" data-tf="15m">15m</button>
+                <button class="tf-btn active" data-tf="1h">1H</button>
+                <button class="tf-btn" data-tf="4h">4H</button>
+                <button class="tf-btn" data-tf="1d">1D</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout: 2 Columns -->
+        <div class="dashboard-grid">
+
+            <!-- Left Main Column: Signal Hero Card & Candlestick Chart -->
+            <div class="main-chart-column">
+
+                <!-- Actionable Signal Entry Card -->
+                <div class="signal-hero-card" id="signal-hero-card">
+                    <div class="signal-header">
+                        <div class="symbol-info">
+                            <span class="symbol-emoji" id="current-emoji">🥇</span>
+                            <div class="symbol-details">
+                                <h2 id="current-symbol">XAUUSD</h2>
+                                <p id="current-name">Gold / US Dollar</p>
+                            </div>
+                        </div>
+
+                        <div class="live-price-badge">
+                            <div class="price" id="current-price">$0.00</div>
+                            <div class="change" id="current-change">Real-time OHLCV</div>
+                        </div>
+                    </div>
+
+                    <!-- Huge Action Signal Badge & Confidence Bar -->
+                    <div class="signal-badge-container">
+                        <div class="action-badge neutral" id="action-badge">
+                            <span>●</span>
+                            <span>ANALYZING...</span>
+                        </div>
+
+                        <div class="confidence-box">
+                            <div class="conf-label">
+                                <span>AI CONFIDENCE (ទំនុកចិត្ត)</span>
+                                <span id="conf-pct">0%</span>
+                            </div>
+                            <div class="conf-bar-bg">
+                                <div class="conf-bar-fill" id="conf-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optimal Trade Entry (OTE) Sniping Bar -->
+                    <div class="optimal-entry-bar" id="optimal-entry-bar">
+                        <div class="ote-left">
+                            <span class="ote-icon">🎯</span>
+                            <div class="ote-info">
+                                <span class="ote-title">កម្រិតតម្លៃចូលល្អបំផុត (OPTIMAL ENTRY ZONE)</span>
+                                <strong class="ote-range" id="ote-range">$0.00 — $0.00</strong>
+                                <span class="ote-technique" id="ote-technique">Analyzing Retracement...</span>
+                            </div>
+                        </div>
+                        <div class="ote-right">
+                            <div class="ote-status-pill wait" id="ote-status-pill">
+                                <span class="ote-dot"></span>
+                                <span id="ote-status-text">WAIT FOR DIP</span>
+                            </div>
+                            <button class="btn-sound-toggle" id="btn-sound-toggle" title="បើក/បិទ សំឡេង Alert">
+                                <span id="sound-icon">🔊</span>
+                                <span id="sound-text">SOUND ON</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4 Key Numbers: Entry, Stop Loss, Take Profit, R:R -->
+                    <div class="signal-levels-matrix">
+                        <div class="level-card entry">
+                            <div class="label">🎯 តម្លៃចូល (Entry Price)</div>
+                            <div class="value" id="lvl-entry">$0.00</div>
+                            <div class="subtext">Trigger Zone</div>
+                        </div>
+
+                        <div class="level-card sl">
+                            <div class="label">🛑 កាត់ខាត (Stop Loss)</div>
+                            <div class="value" id="lvl-sl">$0.00</div>
+                            <div class="subtext" id="lvl-sl-sub" style="color: var(--color-red);">Risk: $0.00</div>
+                        </div>
+
+                        <div class="level-card tp">
+                            <div class="label">🏆 យកចំណេញ (Take Profit)</div>
+                            <div class="value" id="lvl-tp">$0.00</div>
+                            <div class="subtext" id="lvl-tp-sub" style="color: var(--color-green);">Target: $0.00</div>
+                        </div>
+
+                        <div class="level-card rr">
+                            <div class="label">⚖️ សមាមាត្រ (Risk / Reward)</div>
+                            <div class="value" id="lvl-rr">1 : 0.0</div>
+                            <div class="subtext" id="lvl-rr-sub">Calculated</div>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Take Profit Targets -->
+                    <div class="tp-targets-row">
+                        <div class="tp-target-box">
+                            <div class="tp-tag">Target 1 (Conservative)</div>
+                            <div class="tp-price" id="tp1-val">$0.00</div>
+                        </div>
+                        <div class="tp-target-box" style="border-color: rgba(0, 245, 155, 0.5);">
+                            <div class="tp-tag">Target 2 (Primary TP)</div>
+                            <div class="tp-price" id="tp2-val">$0.00</div>
+                        </div>
+                        <div class="tp-target-box">
+                            <div class="tp-tag">Target 3 (Extended Runner)</div>
+                            <div class="tp-price" id="tp3-val">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Candlestick Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <span>📊</span>
+                            <span>ផ្សាយផ្ទាល់ Candlestick Chart (TradingView Engine)</span>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item"><span class="legend-line" style="background: #00d4ff;"></span> <span>EMA 21</span></div>
+                            <div class="legend-item"><span class="legend-line" style="background: #ffb703;"></span> <span>EMA 50</span></div>
+                            <div class="legend-item"><span class="legend-line" style="background: #9d4edd;"></span> <span>EMA 200</span></div>
+                        </div>
+                    </div>
+                    <div id="chart-container"></div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar: Confluence, Indicators & Lot Sizing -->
+            <div class="sidebar-column">
+
+                <!-- 0. Auto-Dropped Signals Live Feed Card -->
+                <div class="side-card">
+                    <div class="card-title-bar">
+                        <h3><span>⚡</span> <span>សញ្ញាទម្លាក់ស្វ័យប្រវត្តិ (Auto-Dropped Signals)</span></h3>
+                        <span class="pulse-live-tag">LIVE FEED</span>
+                    </div>
+                    <div class="dropped-signals-container" id="dropped-signals-list">
+                        <div class="no-signals-msg">⚡ កំពុងរង់ចាំតម្លៃឈានដល់កម្រិតល្អបំផុត... (Monitoring for Optimal Entry...)</div>
+                    </div>
+                </div>
+
+                <!-- 1. Multi-Timeframe Confluence Matrix -->
+                <div class="side-card">
+                    <div class="card-title-bar">
+                        <h3><span>🔗</span> <span>Multi-TF Confluence (វិភាគ 4 Timeframes)</span></h3>
+                    </div>
+                    <div class="confluence-grid" id="confluence-grid">
+                        <div class="conf-tf-box"><div class="tf-name">15M</div><div class="tf-signal neutral">● WAIT</div></div>
+                        <div class="conf-tf-box"><div class="tf-name">1H</div><div class="tf-signal neutral">● WAIT</div></div>
+                        <div class="conf-tf-box"><div class="tf-name">4H</div><div class="tf-signal neutral">● WAIT</div></div>
+                        <div class="conf-tf-box"><div class="tf-name">1D</div><div class="tf-signal neutral">● WAIT</div></div>
+                    </div>
+                </div>
+
+                <!-- 2. Lot Size & Position Sizing Calculator -->
+                <div class="side-card">
+                    <div class="card-title-bar">
+                        <h3><span>⚖️</span> <span>គណនាទំហំ Lot Size (Position Sizing)</span></h3>
+                    </div>
+                    <div class="lot-calculator">
+                        <div class="calc-inputs">
+                            <div class="calc-group">
+                                <label>ដើមទុន / Capital ($)</label>
+                                <input type="number" id="calc-balance" value="1000" step="100">
+                            </div>
+                            <div class="calc-group">
+                                <label>ហានិភ័យ / Risk (%)</label>
+                                <input type="number" id="calc-risk" value="2" step="0.5">
+                            </div>
+                        </div>
+
+                        <div class="calc-results">
+                            <div class="calc-res-item">
+                                <div class="res-label">Recommended Lot</div>
+                                <div class="res-val" id="res-lot">0.05 Lots</div>
+                            </div>
+                            <div class="calc-res-item">
+                                <div class="res-label">Max Risk ($)</div>
+                                <div class="res-val" id="res-risk-dollar" style="color: var(--color-red);">-$20.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Technical Indicators Signals Matrix -->
+                <div class="side-card">
+                    <div class="card-title-bar">
+                        <h3><span>📈</span> <span>សូចនាករបច្ចេកទេស (Technical Matrix)</span></h3>
+                    </div>
+                    <table class="indicator-table">
+                        <tbody id="indicator-rows">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 4. AI Market Logic & Reasoning -->
+                <div class="side-card">
+                    <div class="card-title-bar">
+                        <h3><span>🧠</span> <span>AI Reasoning & ហេតុផលបច្ចេកទេស</span></h3>
+                    </div>
+                    <div class="reasoning-box" id="ai-reasoning-box">
+                        <p>កំពុងផ្ទុកការវិភាគបច្ចេកទេស...</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 4. Modal: Market Scanner -->
+    <div class="modal-overlay" id="scan-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><span>🔍</span> <span>ស្កេនឱកាសជួញដូរ XAUUSD & BTCUSD</span></h2>
+                <button class="btn-close-modal" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="scan-table">
+                    <thead>
+                        <tr>
+                            <th>ចំណាត់ថ្នាក់</th>
+                            <th>ទីផ្សារ</th>
+                            <th>សញ្ញា</th>
+                            <th>ទំនុកចិត្ត</th>
+                            <th>តម្លៃបច្ចុប្បន្ន</th>
+                            <th>R : R</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scan-table-body">
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Audio Notification Toast -->
+    <div class="auto-signal-toast" id="auto-signal-toast">
+        <div class="toast-header">
+            <span class="toast-badge" id="toast-badge">🎯 AUTO SIGNAL DROPPED</span>
+            <span class="toast-time" id="toast-time">00:00:00</span>
+        </div>
+        <div class="toast-body">
+            <div class="toast-symbol" id="toast-symbol">🥇 XAUUSD</div>
+            <div class="toast-action" id="toast-action">BUY @ $0.00</div>
+            <div class="toast-details" id="toast-details">SL: $0.00 | TP: $0.00</div>
+        </div>
+    </div>
+
+    <!-- App Script -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
